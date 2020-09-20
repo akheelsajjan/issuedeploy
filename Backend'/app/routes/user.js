@@ -53,8 +53,105 @@ module.exports.setRouter = (app) => {
 
     app.post(`${baseUrl}/:userId/delete`, auth.isAuthorized, userController.deleteUser);
 
-    
-
     app.post(`${baseUrl}/logout`, auth.isAuthorized, userController.logout);
+
+    app.get(`${baseUrl}/:userId/userVerification`, userController.userVerification);
+
+    app.post(`${baseUrl}/forgotPassword`, userController.forgotPassword);
+    /**
+     * @apiGroup Users
+     * @apiVersion  1.0.0
+     * @api {post} /api/v1/users/forgotPassword Forgot Password.
+     *
+     * @apiParam {string} UserId UserId of the user. (body params) (required)
+     *
+     * @apiSuccess {object} myResponse shows error status, message, http status code, data.
+     * 
+     * @apiSuccessExample {object} Success-Response:
+        {
+            "error": false,
+            "message": "User Details Found",
+            "status": 200,
+            "data": "Password updatePassword successfully"
+        }
+        
+    * @apiErrorExample {json} Error-Response:
+    *
+    *       
+        {
+            "error": true,
+            "message": "Failed To Find User Details",
+            "status": 500,
+            "data": null
+        }
+
+    * @apiErrorExample {json} Error-Response:
+    *
+    *       
+        {
+            "error": true,
+            "message": "No User Details Found",
+            "status": 404,
+            "data": null
+        }                    
+    * @apiErrorExample {json} Error-Response:
+    *
+    *       
+        {
+            "error": true,
+            "message": "UserId" parameter is missing",
+            "status": 400,
+            "data": null
+        }
+*/
+
+    app.post(`${baseUrl}/resetPassword`, userController.resetPassword);
+
+    /**
+       * @apiGroup Users
+       * @apiVersion  1.0.0
+       * @api {post} /api/v1/users/resetPassword Reset Password .
+       *
+       * @apiParam {string} Email ID  Email ID of the user. (body params) (required)
+       *
+       * @apiSuccess {object} myResponse shows error status, message, http status code, data.
+       * 
+       * @apiSuccessExample {object} Success-Response:
+          {
+              "error": false,
+              "message": "Mail sent Successfully",
+              "status": 200,
+              "data": "Password reset successful"
+          }
+          
+      * @apiErrorExample {json} Error-Response:
+      *
+      *       
+          {
+              "error": true,
+              "message": "Failed To Find User Details",
+              "status": 500,
+              "data": null
+          }
+
+      * @apiErrorExample {json} Error-Response:
+      *
+      *       
+          {
+              "error": true,
+              "message": "No User Details Found",
+              "status": 404,
+              "data": null
+          }
+      * @apiErrorExample {json} Error-Response:
+      *
+      *       
+          {
+              "error": true,
+              "message": "UserId" parameter is missing",
+              "status": 400,
+              "data": null
+          }
+  */
 
 }

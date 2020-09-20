@@ -8,6 +8,7 @@ const validateInput = require('../libs/paramsValidationLib')
 const check = require('../libs/checkLib')
 const token = require('../libs/tokenLib')
 const AuthModel = mongoose.model('Auth')
+const mailer = require('../libs/mailerLib');
 
 /* Models */
 const UserModel = mongoose.model('User')
@@ -153,6 +154,9 @@ let signUpFunction = (req, res) => {
                                 reject(apiResponse)
                             } else {
                                 let newUserObj = newUser.toObject();
+                                mailer.autoEmail(newUserObj.email, `<h1> Welcome ${newUser.firstName} ${newUser.lastName}!!, To Issue Tracker Tool</h1><br>
+                                <a href='http://techblogs.live/email-verify/${newUser.userId}'>Click here to verify your email address</a><br>`, "Email Address Verification");
+                                console.log("mail sent")
                                 resolve(newUserObj)
                             }
                         })
@@ -330,6 +334,37 @@ let loginFunction = (req, res) => {
 
 // end of the login function 
 
+//---------------------UserVerification--------------------//
+let userVerification = (req, res) => {
+
+    if (check.isEmpty(req.params.userId)) {
+        logger.error("UserId parameter missing", "UserController: userVerification", 10);
+        let apiResponse = response.generate(true, "userId is missing", 500, null);
+        res.send(apiResponse);
+    } else {
+        UserModel.update({ userId: req.params.userId }, { userVerificationStatus: true }, { multi: true }, (err, result) => {
+
+            if (err) {
+                logger.error("Failed to verify User ", "userController: userVerification", 10);
+                let apiResponse = response.generate(true, "Failed to verify user", 500, null);
+                res.send(apiResponse);
+            }
+            else if (check.isEmpty(result)) {
+                logger.error("User Not found", "userController: userVerification", 10);
+                let apiResponse = response.generate(true, "User not found", 500, null);
+                res.send(apiResponse);
+            }
+            else {
+                logger.info("User Verified", "userController: userVerification", 10);
+                let apiResponse = response.generate(false, "user found & verified", 200, "User Verified Successfully");
+                res.send(apiResponse);
+            }
+        });
+    }
+}
+
+//---------------------END OF UserVerification--------------------//
+
 
 /**
  * function to logout user.
@@ -352,6 +387,133 @@ let logout = (req, res) => {
   })
 } // end of the logout function.
 
+//-----------------------FORGOT PASSWORD --------------------//
+
+let forgotPassword = (req, res) =>{
+    if(check.isEmpty(req.body.email)){
+        logger.error("Email ID parameter missing", "UserController: forgotPassword", 10);
+        let apiResponse = response.generate(true, "Email ID is missing", 500, null);
+        res.send(apiResponse);
+    }else{
+        UserModel.findOne({'email': req.body.email})
+        .lean()
+        .exec((err, result) => {
+            if (err) {
+                logger.error(err.message, 'userController : forgotPassword', 10)
+                let apiResponse = response.generate(true, 'Failed To Find Email ID', 500, null)
+                res.send(apiResponse)
+            } else if (check.isEmpty(result)) {
+                let apiResponse = response.generate(true, 'No Email ID Found', 404, null)
+                res.send(apiResponse)
+            } else {
+                let apiResponse = response.generate(false, 'Emai ID  Details Found', 200, result);
+                mailer.autoEmail(req.body.email, `<h1>Greetings!! from  MY-TO-DO-LIST APP</h1><br>
+                                                    <a href='http://techblogs.live/resetPassword/${result.userId}'> 
+                                                    Click Here To Rest Your Password</a>`, 'Reset Password');
+                res.send(apiResponse)
+            }
+        })
+    }
+}
+//-----------------------END OF FORGOT PASSWORD --------------------//
+
+let resetPassword = (req, res) =>{
+
+    let findUser = () => {
+
+        return new Promise((resolve, reject) => {
+            if (req.body.userId) {
+                UserModel.findOne({  userId: req.body.userId }, (err, userDetails) => {
+                    if (err) {
+                        console.log("--->" + err)
+                        logger.error('Failed To Retrieve User Data', 'userController: resetPassword()', 10)
+                        let apiResponse = response.generate(true, 'Failed To Find User Details', 500, null)
+                        reject(apiResponse)
+                    } else if (check.isEmpty(userDetails)) {
+                        logger.error('No User Found', 'userController: resetPassword()', 5)
+                        let apiResponse = response.generate(true, 'No User Details Found', 404, null)
+                        reject(apiResponse)
+                    } else {
+
+                        logger.info('User Found', 'userController: resetPassword()', 10)
+                        resolve(userDetails)
+                    }
+                });
+
+            } else {
+                let apiResponse = response.generate(true, '"UserId" parameter is missing', 400, null)
+                reject(apiResponse)
+            }
+        })
+    }
+
+    // let updatePassword = (req, res) => {
+    //     let options = req.body;
+    //     if (check.isEmpty(req.body.password)) {
+    //         let apiResponse = response.generate(true, 'Password is missing', 403, null);
+    //         reject(apiResponse)
+    //     } else {
+    //         UserModel.update({ userId: req.body.userId },{password:passwordLib.hashpassword(req.body.password), }, options, { multi: true })
+    //             .exec((err, result) => {
+    //                 if (err) {
+    //                     logger.error(err.message, 'userController: updatePassword ', 10)
+    //                     let apiResponse = response.generate(true, 'Failed To Update Password ', 500, null)
+    //                     reject(apiResponse)
+    //                 } else if (check.isEmpty(result)) {
+    //                     let apiResponse = response.generate(true, 'No User Found', 404, null)
+    //                     reject(apiResponse)
+    //                 } else {
+    //                     //let apiResponse = response.generate(false, 'Password Edited successfully', 200, result)
+    //                     //res.send(apiResponse)
+    //                     resolve(result);
+    //                 } 
+    //             })
+    //     }
+    // }
+
+        let updatePassword = (userDetails) => {
+        return new Promise((resolve, reject) => {
+            if (check.isEmpty(req.body.password)) {
+                logger.error("password is missing", "UserController: updatePassword", 10);
+                let apiResponse = response.generate(true, "Password is missing", 500, null);
+                reject(apiResponse);
+            } else {
+                UserModel.update({ userId: req.body.userId }, { password: passwordLib.hashpassword(req.body.password) }, { multi: true }, (err, result) => {
+
+                    if (err) {
+                        logger.error("Failed to change Password ", "userController: updatePassword", 10);
+                        let apiResponse = response.generate(true, "Failed to change Password", 500, null);
+                        reject(apiResponse);
+                    }
+                    else if (check.isEmpty(result)) {
+                        logger.error("User Not found", "userController: updatePassword", 10);
+                        let apiResponse = response.generate(true, "User not found", 500, null);
+                        reject(apiResponse);
+                    }
+                    else {
+                        logger.info("Password updated", "userController: updatePassword", 10);
+                       
+                        resolve("Password reset successful");
+                    }
+                });
+            }
+        });
+    }
+
+    findUser(req, res)
+        .then(updatePassword)
+        .then((result)=>{
+            let apiResponse = response.generate(false, 'Password updatePassword successfully', 200, result);
+            res.send(apiResponse)
+        })
+        .catch(
+            (err)=>{
+               // console.log(err)
+                res.send(err);
+            }
+        )
+}
+
 
 module.exports = {
     signUpFunction: signUpFunction,
@@ -360,6 +522,9 @@ module.exports = {
     deleteUser: deleteUser,
     getSingleUser: getSingleUser,
     loginFunction: loginFunction,
-    logout: logout
+    logout: logout,
+    forgotPassword: forgotPassword,
+    resetPassword: resetPassword,
+    userVerification:userVerification
 
 }// end exports
