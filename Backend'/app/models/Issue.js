@@ -1,5 +1,5 @@
 const mongoose = require('mongoose'),
-Schema = mongoose.Schema;
+    Schema = mongoose.Schema;
 
 let IssueSchema = new Schema({
     issueID: {
@@ -18,7 +18,7 @@ let IssueSchema = new Schema({
         type: String,
         required: true,
         index: true
-      },
+    },
 
     reporterName: {
         type: String,
@@ -39,11 +39,11 @@ let IssueSchema = new Schema({
         type: Date,
         default: ""
     },
-    assignedTo:{
+    assignedTo: {
         type: String,
         default: ''
     },
-    attachment:{
+    attachment: {
         type: String,
         default: ''
     },

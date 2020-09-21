@@ -10,9 +10,9 @@ module.exports.setRouter = (app) => {
 
     app.get(`${baseUrl}/getwatchers/:issueID`,  watcherController.getWatcherByIssueByID);
        /**
-         * @apiGroup issues
+         * @apiGroup watcher
          * @apiVersion  1.0.0
-         * @api {post} /api/v1/comments/getcomments/:issueID api for getting comments.
+         * @api {post} /api/v1/watcher/getwatchers/:issueID api for getting watcher.
          *
          *  @apiParam {string} issueID  of the issue. (body params) (required)
          * 
@@ -20,28 +20,15 @@ module.exports.setRouter = (app) => {
          * @apiSuccessExample {object} Success-Response:
             {
                 "error": false,
-                "message": "Issue created",
+                "message": "watcher Found",
                 "status": 200,
                 "data": [
                     {
-                        "_id": "5f462800723ee47a1cfc3695",
+                        "_id": "5f6324eb74a8334ff8691056",
                         "__v": 0,
-                        "generatedOn": "2020-08-26T09:14:40Z",
-                        "comment": "this is a comment ",
-                        "userName": "self",
-                        "userID": "R_3H4eCCM",
-                        "issueID": "uCNPH2Ny7",
-                        "commentID": "CCJng_-f_"
-                    },
-                     {
-                        "_id": "5f462826723ee47a1cfc3696",
-                        "__v": 0,
-                        "generatedOn": "2020-08-26T09:15:18Z",
-                        "comment": "this is a comment 2",
-                        "userName": "self",
-                        "userID": "R_3H4eCCM",
-                        "issueID": "uCNPH2Ny7",
-                        "commentID": "H5fLhF139"
+                        "watcherID": "T3xIozX6m",
+                        "userID": "AkbYoQwsasFc",
+                        "issueID": "l7VIvUHer"
                     }
                 ]
             }
@@ -50,7 +37,7 @@ module.exports.setRouter = (app) => {
             *
                   {
                         "error": true,
-                        "message": "No comments Found",
+                        "message": "No watcher Found",
                         "status": 404,
                         "data": null
                     }
@@ -58,27 +45,24 @@ module.exports.setRouter = (app) => {
 
     app.post(`${baseUrl}/addWatcher/:issueID`, auth.isAuthorized, watcherController.addWatcher);
        /**
-         * @apiGroup issues
+         * @apiGroup watcher
          * @apiVersion  1.0.0
-         * @api {post} /api/v1/comments/addcomments/:issueID api for addinga a comment.
+         * @api {post} /api/v1/watcher/addWatcher/:issueID api for adding a watcher.
          *
          *  @apiParam {string} issueID  of the issue. (body params) (required)
          * 
          * 
          * @apiSuccessExample {object} Success-Response:
-            {
+           {
                 "error": false,
-                "message": "comment added",
+                "message": "watcher added",
                 "status": 200,
                 "data": {
                     "__v": 0,
-                    "_id": "5f462bf31e24b2757cb88334",
-                    "generatedOn": "2020-08-26T09:31:31Z",
-                    "comment": "this is a comment 1.3",
-                    "userName": "self",
-                    "userID": "R_3H4eCCM",
-                    "issueID": "uCNPH2Ny7",
-                    "commentID": "yTRpUCzze"
+                    "_id": "5f6324f774a8334ff8691057",
+                    "watcherID": "wqH-4E5_8",
+                    "userID": "asd",
+                    "issueID": "l7VIvUHer"
                 }
             }
 
@@ -94,6 +78,38 @@ module.exports.setRouter = (app) => {
         */
 
        app.put(`${baseUrl}/removeWatcher/:watcherID`,auth.isAuthorized, watcherController.rmoveWatcher);
+        /**
+         * @apiGroup watcher
+         * @apiVersion  1.0.0
+         * @api {put} /api/v1/watcher/removeWatcher/:watcherID api for adding a watcher.
+         *
+         *  @apiParam {string} watcherID  of the issue. (body params) (required)
+         * 
+         * 
+         * @apiSuccessExample {object} Success-Response:
+            {
+                "error": false,
+                "message": "removed the watcher successfully",
+                "status": 200,
+                "data": {
+                    "_id": "5f63242e5a94bd336410f0f9",
+                    "__v": 0,
+                    "watcherID": "9RtK-yGcg",
+                    "userID": "9FlCtKqcD",
+                    "issueID": "l7VIvUHer"
+                }
+            }
+
+        * @apiErrorExample {json} Error-Response:
+        *
+        * {
+                "error": true,
+                "message": "Route not found in the application",
+                "status": 404,
+                "data": null
+          }
+                       
+        */
 
 
 }

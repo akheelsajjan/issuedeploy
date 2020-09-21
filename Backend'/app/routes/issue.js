@@ -8,7 +8,7 @@ module.exports.setRouter = (app) => {
 
     let baseUrl = `${appConfig.apiVersion}/issue`;
 
-    app.post(`${baseUrl}/create`,auth.isAuthorized, userController.IssueCreate);
+    app.post(`${baseUrl}/create`, auth.isAuthorized, userController.IssueCreate);
 
     /**
      * @apiGroup issues
@@ -52,7 +52,7 @@ module.exports.setRouter = (app) => {
                 "data": null
             }
     */
-    app.get(`${baseUrl}/:userId/allIssues`,auth.isAuthorized, userController.getAllIssuesOfuser);
+    app.get(`${baseUrl}/:userId/allIssues`, auth.isAuthorized, userController.getAllIssuesOfuser);
     /**
      * @apiGroup issues
      * @apiVersion  1.0.0
@@ -89,64 +89,64 @@ module.exports.setRouter = (app) => {
             }
     */
 
-   app.get(`${baseUrl}/allIssues`,auth.isAuthorized, userController.getAllIssues);
-   /**
-    * @apiGroup issues
-    * @apiVersion  1.0.0
-    * @api {get} /api/v1/issue/allIssues api go get all issues.
-    *
-    * 
-    * @apiSuccessExample {object} Success-Response:
-       {
-       "error": false,
-       "message": "All Issue Details Found",
-        "status": 200,
-        "data": [
+    app.get(`${baseUrl}/allIssues`, auth.isAuthorized, userController.getAllIssues);
+    /**
+     * @apiGroup issues
+     * @apiVersion  1.0.0
+     * @api {get} /api/v1/issue/allIssues api go get all issues.
+     *
+     * 
+     * @apiSuccessExample {object} Success-Response:
+        {
+        "error": false,
+        "message": "All Issue Details Found",
+         "status": 200,
+         "data": [
+                {
+                    "comment": [],
+                    "assignedTo": "self",
+                    "generatedOn": "2020-08-25T02:57:30.000Z",
+                    "discription": "N/A",
+                    "status": "old",
+                    "reporterName": "ams",
+                    "reporterID": "4",
+                    "issueName": "poi",
+                    "issueID": "tSvRqXcDA"
+                },
                {
-                   "comment": [],
-                   "assignedTo": "self",
-                   "generatedOn": "2020-08-25T02:57:30.000Z",
-                   "discription": "N/A",
-                   "status": "old",
-                   "reporterName": "ams",
-                   "reporterID": "4",
-                   "issueName": "poi",
-                   "issueID": "tSvRqXcDA"
-               },
-              {
-                "comment": [],
-                "assignedTo": "self",
-                "generatedOn": "2020-08-26T02:09:16.000Z",
-                "discription": "N/A",
-                "status": "old",
-                "reporterName": "ams",
-                "reporterID": "5",
-                "issueName": "popp",
-                "issueID": "uCNPH2Ny7"
-            },
+                 "comment": [],
+                 "assignedTo": "self",
+                 "generatedOn": "2020-08-26T02:09:16.000Z",
+                 "discription": "N/A",
+                 "status": "old",
+                 "reporterName": "ams",
+                 "reporterID": "5",
+                 "issueName": "popp",
+                 "issueID": "uCNPH2Ny7"
+             },
+             {
+                 "comment": [],
+                 "assignedTo": "self",
+                 "generatedOn": "2020-08-26T02:09:18.000Z",
+                 "discription": "N/A",
+                 "status": "old",
+                 "reporterName": "ams",
+                 "reporterID": "5",
+                 "issueName": "popp",
+                 "issueID": "h0gkkUcf0"
+             },
+             ]
+        }
+ 
+         * @apiErrorExample {json} Error-Response:
+         *
             {
-                "comment": [],
-                "assignedTo": "self",
-                "generatedOn": "2020-08-26T02:09:18.000Z",
-                "discription": "N/A",
-                "status": "old",
-                "reporterName": "ams",
-                "reporterID": "5",
-                "issueName": "popp",
-                "issueID": "h0gkkUcf0"
-            },
-            ]
-       }
-
-        * @apiErrorExample {json} Error-Response:
-        *
-           {
-               "error": true,
-               "message": "Failed To Find all the issues",
-               "status": 500,
-               "data": null
-           }
-   */
+                "error": true,
+                "message": "Failed To Find all the issues",
+                "status": 500,
+                "data": null
+            }
+    */
 
 
     app.get(`${baseUrl}/getIssue/:issueID`, auth.isAuthorized, userController.getIssueByID);

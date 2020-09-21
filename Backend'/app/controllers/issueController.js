@@ -32,7 +32,7 @@ let IssueCreate = (req, res) => {
     let createIssue = () => {
         return new Promise((resolve, reject) => {
             let newIssue = new IssueModel({
-                issueID: shortid.generate(),
+                issueID: shortid.generate(),//int
                 issueName: req.body.issueName,
                 userId: req.body.userId, //userId
                 reporterName: req.body.reporterName,
@@ -49,6 +49,7 @@ let IssueCreate = (req, res) => {
                     let apiResponse = response.generate(true, 'Failed to create new Issue', 500, null)
                     reject(apiResponse)
                 } else {
+                    
                     resolve(newissue)
                 }
             })
@@ -184,6 +185,28 @@ let deleteIssue = (req, res) => {
     });
 
 }// end delete issue
+
+
+//searc
+let getIssueByQuery = (req, res) => {
+        IssueModel.findOne()
+            .exec((err, result) => {
+                if (err) {
+                    console.log(err)
+                    logger.error(err.message, 'issueController: getIssueByID', 10)
+                    let apiResponse = response.generate(true, 'Failed To Find User Details', 500, null)
+                    res.send(apiResponse)
+                } else if (check.isEmpty(result)) {
+                    logger.info('No issue Found', 'issueController: getIssueByID')
+                    let apiResponse = response.generate(true, 'No issue Found', 404, null)
+                    res.send(apiResponse)
+                } else {
+                    let apiResponse = response.generate(false, 'issue Details Found', 200, result)
+                    res.send(apiResponse)
+                }
+            });
+    }
+// end get single issue
 
 
 

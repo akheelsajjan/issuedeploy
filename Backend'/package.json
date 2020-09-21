@@ -9,6 +9,7 @@
   "author": "Akheel Sajjan <aksajjan282@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "apidoc": "^0.25.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.3",
